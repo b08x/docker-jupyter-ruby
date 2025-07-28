@@ -1,10 +1,14 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG BASE_IMAGE=quay.io/jupyter/base-notebook
-ARG BASE_IMAGE_TAG=latest
+ARG BASE_IMAGE=quay.io/jupyter/pytorch-notebook
+ARG BASE_IMAGE_TAG=cuda12-python-3.11.8
 FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
 
 LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
+
+# Set environment variables for NVIDIA GPU support
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
@@ -30,7 +34,7 @@ RUN apt-get update --yes && \
 
 USER ${NB_UID}
 
-# Install JupyterHub, JupyterLab, NBClassic and Jupyter Notebook
+# Install additional packages
 # Generate a Jupyter Server config
 # Cleanup temporary files
 # Correct permissions
@@ -42,9 +46,7 @@ RUN mamba clean --all -f -y && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     pip install --no-cache-dir \
-    'spacy' 'google-generativeai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' 'torch' 'torchvision' 'torchaudio' && \
-    python3 -m spacy download en_core_web_sm && \
-    python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
+    'google-generativeai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' && \
     fix-permissions "/home/${NB_USER}"
 
 ENV JUPYTER_PORT=8888
