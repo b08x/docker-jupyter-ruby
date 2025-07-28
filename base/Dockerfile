@@ -42,8 +42,10 @@ RUN mamba clean --all -f -y && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     pip install --no-cache-dir \
-    'spacy' 'google-generativeai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' 'torch' 'torchvision' 'torchaudio' && \
-    python3 -m spacy download en_core_web_sm && \
+    'spacy' 'google-generativeai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' \
+    --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    python3 -m spacy download en_core_web_trf --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cu121 && \
     python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
     fix-permissions "/home/${NB_USER}"
 
