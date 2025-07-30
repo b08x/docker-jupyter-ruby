@@ -19,6 +19,7 @@ RUN apt-get update --yes && \
     # - Add necessary fonts for matplotlib/seaborn
     #   See https://github.com/jupyter/docker-stacks/pull/380 for details
     fonts-liberation \
+    libyaml-dev \
     # - `pandoc` is used to convert notebooks to html files
     #   it's not present in the aarch64 Ubuntu image, so we install it here
     pandoc \
@@ -43,9 +44,9 @@ RUN mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     pip install --no-cache-dir \
     'spacy' 'google-generativeai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' \
-    --extra-index-url https://download.pytorch.org/whl/cu121 && \
-    python3 -m spacy download en_core_web_trf --extra-index-url https://download.pytorch.org/whl/cu121 && \
-    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    --extra-index-url https://download.pytorch.org/whl/cpu && \
+    python3 -m spacy download en_core_web_trf --extra-index-url https://download.pytorch.org/whl/cpu && \
+    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cpu && \
     python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
     fix-permissions "/home/${NB_USER}"
 

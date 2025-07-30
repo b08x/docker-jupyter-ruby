@@ -84,6 +84,7 @@ RUN apt-get update && apt-get install -y -V --no-install-recommends \
     less \
     link-grammar \
     libzmq3-dev \
+    libyaml-dev \
     minisat \
     mysql-client \
     neovim \
