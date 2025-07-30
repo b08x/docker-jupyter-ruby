@@ -1,31 +1,10 @@
 OWNER = 'b08x'.freeze
-ALL_IMAGES = %w[
-  nlp
-  base
-].each(&:freeze).freeze
-
-BASE_IMAGES = ALL_IMAGES.map do |name|
-  base_image_name, base_image_tag = nil
-  IO.foreach("#{name}/Dockerfile") do |line|
-    break if base_image_name && base_image_tag
-
-    case line
-    when /BASE_IMAGE_TAG=(\h+)/
-      base_image_tag = Regexp.last_match(1)
-    when /BASE_IMAGE_TAG=latest/
-      base_image_tag = 'latest'
-    when /\AFROM\s+([^:]+)/
-      base_image_name = Regexp.last_match(1)
-    end
-  end
-  [
-    name,
-    [base_image_name, base_image_tag].join(':')
-  ]
-end.to_h
+IMAGES = {
+  'base' => %w[cpu gpu],
+  'nlp' => %w[cpu gpu]
+}.freeze
 
 DOCKER_FLAGS = ENV['DOCKER_FLAGS']
-
 TAG_LENGTH = 12
 
 def git_revision
@@ -36,54 +15,120 @@ def tag_from_commit_sha1
   git_revision[...TAG_LENGTH]
 end
 
-ALL_IMAGES.each do |image|
-  revision_tag = tag_from_commit_sha1
+def get_base_image(dockerfile_path)
+  args = {}
+  from_line = nil
 
-  desc "Pull the base image for #{OWNER}/#{image} image"
-  task "pull/base_image/#{image}" do
-    base_image = BASE_IMAGES[image]
-    sh "docker pull #{base_image}"
+  IO.foreach(dockerfile_path) do |line|
+    case line
+    when /^\s*ARG\s+([^=]+)=(.+)/
+      args[Regexp.last_match(1).strip] = Regexp.last_match(2).strip
+    when /^\s*FROM\s+(.+)/
+      from_line = Regexp.last_match(1).strip
+      break
+    end
   end
 
-  desc "Build #{OWNER}/#{image} image"
-  task "build/#{image}" => "pull/base_image/#{image}" do
-    sh "docker build -f #{image}/Dockerfile #{DOCKER_FLAGS} --rm --force-rm -t #{OWNER}/notebook-#{image}:latest ."
+  return nil unless from_line
+
+  # Substitute ARG variables
+  from_line.gsub!(/\$\{?(\w+)\}?/) do |match|
+    args.fetch(Regexp.last_match(1), match)
   end
 
-  desc "Make #{OWNER}/#{image} image"
-  task "make/#{image}" do
-    sh "docker build -f #{image}/Dockerfile #{DOCKER_FLAGS} --rm --force-rm -t #{OWNER}/notebook-#{image}:latest ."
+  from_line
+end
+
+IMAGES.each do |image, variants|
+  variants.each do |variant|
+    dockerfile = variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile"
+    next unless File.exist?(dockerfile)
+
+    image_tag = "#{OWNER}/notebook-#{image}:#{variant}"
+    revision_tag = "#{OWNER}/notebook-#{image}:#{variant}-#{tag_from_commit_sha1}"
+
+    dependencies = []
+    dependencies << "build/base/#{variant}" if image == 'nlp'
+
+    desc "Build #{image_tag}"
+    task "build/#{image}/#{variant}" => dependencies do
+      if image == 'base'
+        base_image = get_base_image(dockerfile)
+        puts "Pulling base image for #{image}/#{variant}: #{base_image}"
+        sh "docker pull #{base_image}"
+      end
+      sh "docker build -f #{dockerfile} #{DOCKER_FLAGS} --rm --force-rm -t #{image_tag} ."
+    end
+
+    desc "Make #{image_tag} (force build without cache)"
+    task "make/#{image}/#{variant}" => dependencies do
+      if image == 'base'
+        base_image = get_base_image(dockerfile)
+        puts "Pulling base image for #{image}/#{variant}: #{base_image}"
+        sh "docker pull #{base_image}"
+      end
+      sh "docker build -f #{dockerfile} #{DOCKER_FLAGS} --no-cache --rm --force-rm -t #{image_tag} ."
+    end
+
+    desc "Tag #{image_tag} with git revision"
+    task "tag/#{image}/#{variant}" => "build/#{image}/#{variant}" do
+      sh "docker tag #{image_tag} #{revision_tag}"
+    end
+
+    desc "Push #{image_tag} and revision tag"
+    task "push/#{image}/#{variant}" => "tag/#{image}/#{variant}" do
+      sh "docker push #{image_tag}"
+      sh "docker push #{revision_tag}"
+    end
   end
 
-  desc "Tag #{OWNER}/#{image} image"
-  task "tag/#{image}" => "build/#{image}" do
-    sh "docker tag #{OWNER}/notebook-#{image}:latest #{OWNER}/notebook-#{image}:#{revision_tag}"
+  desc "Build all variants for #{image}"
+  task "build/#{image}" do
+    variants.each do |variant|
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["build/#{image}/#{variant}"].invoke
+      end
+    end
   end
 
-  desc "Push #{OWNER}/#{image} image"
-  task "push/#{image}" => "tag/#{image}" do
-    sh "docker push #{OWNER}/notebook-#{image}:latest"
-    sh "docker push #{OWNER}/notebook-#{image}:#{revision_tag}"
+  desc "Tag all variants for #{image}"
+  task "tag/#{image}" do
+    variants.each do |variant|
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["tag/#{image}/#{variant}"].invoke
+      end
+    end
+  end
+
+  desc "Push all variants for #{image}"
+  task "push/#{image}" do
+    variants.each do |variant|
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["push/#{image}/#{variant}"].invoke
+      end
+    end
   end
 end
 
-desc 'Build all images'
+desc 'Build all images and variants'
 task 'build-all' do
-  ALL_IMAGES.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["build/#{image}"].invoke
   end
 end
 
-desc 'Tag all images'
+desc 'Tag all images and variants'
 task 'tag-all' do
-  ALL_IMAGES.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["tag/#{image}"].invoke
   end
 end
 
-desc 'Push all images'
+desc 'Push all images and variants'
 task 'push-all' do
-  ALL_IMAGES.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["push/#{image}"].invoke
   end
 end
+
+task default: 'build-all'

@@ -14,8 +14,8 @@ on:
       - "docs/*"
 
 jobs:
-  build_and_push_base:
-    name: notebook-base
+  build_and_push_base_cpu:
+    name: notebook-base-cpu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -24,13 +24,13 @@ jobs:
         with:
           ruby-version: "3.2"
 
-      - name: Build base image
-        run: rake build/base
+      - name: Build base CPU image
+        run: rake build/base/cpu
 
-      - name: Tag base image
+      - name: Tag base CPU image
         run: |
           tag=${GITHUB_SHA:0:12}
-          docker tag b08x/notebook-base:latest b08x/notebook-base:${tag}
+          docker tag b08x/notebook-base:cpu b08x/notebook-base:cpu-${tag}
 
       - name: List images
         run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
@@ -42,18 +42,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Push base image to DockerHub
+      - name: Push base CPU image to DockerHub
         if: github.ref == 'refs/heads/main'
         run: |
-          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-base | while read image_name; do
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-base | grep cpu | while read image_name; do
             echo "Pushing ${image_name}"
             docker push ${image_name}
           done
 
-  build_and_push_nlp:
-    name: notebook-nlp
+  build_and_push_base_gpu:
+    name: notebook-base-gpu
     runs-on: ubuntu-latest
-    needs: build_and_push_base # Ensures this job runs only after build_and_push_base succeeds
     steps:
       - uses: actions/checkout@v1
 
@@ -61,13 +60,13 @@ jobs:
         with:
           ruby-version: "3.2"
 
-      - name: Build nlp image
-        run: rake build/nlp
+      - name: Build base GPU image
+        run: rake build/base/gpu
 
-      - name: Tag nlp image
+      - name: Tag base GPU image
         run: |
           tag=${GITHUB_SHA:0:12}
-          docker tag b08x/notebook-nlp:latest b08x/notebook-nlp:${tag}
+          docker tag b08x/notebook-base:gpu b08x/notebook-base:gpu-${tag}
 
       - name: List images
         run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
@@ -79,10 +78,84 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Push nlp image to DockerHub
+      - name: Push base GPU image to DockerHub
         if: github.ref == 'refs/heads/main'
         run: |
-          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-nlp | while read image_name; do
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-base | grep gpu | while read image_name; do
+            echo "Pushing ${image_name}"
+            docker push ${image_name}
+          done
+
+  build_and_push_nlp_cpu:
+    name: notebook-nlp-cpu
+    runs-on: ubuntu-latest
+    needs: build_and_push_base_cpu # Ensures this job runs only after build_and_push_base_cpu succeeds
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: ruby/setup-ruby@master
+        with:
+          ruby-version: "3.2"
+
+      - name: Build NLP CPU image
+        run: rake build/nlp/cpu
+
+      - name: Tag NLP CPU image
+        run: |
+          tag=${GITHUB_SHA:0:12}
+          docker tag b08x/notebook-nlp:cpu b08x/notebook-nlp:cpu-${tag}
+
+      - name: List images
+        run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
+
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Push NLP CPU image to DockerHub
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-nlp | grep cpu | while read image_name; do
+            echo "Pushing ${image_name}"
+            docker push ${image_name}
+          done
+
+  build_and_push_nlp_gpu:
+    name: notebook-nlp-gpu
+    runs-on: ubuntu-latest
+    needs: build_and_push_base_gpu # Ensures this job runs only after build_and_push_base_gpu succeeds
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: ruby/setup-ruby@master
+        with:
+          ruby-version: "3.2"
+
+      - name: Build NLP GPU image
+        run: rake build/nlp/gpu
+
+      - name: Tag NLP GPU image
+        run: |
+          tag=${GITHUB_SHA:0:12}
+          docker tag b08x/notebook-nlp:gpu b08x/notebook-nlp:gpu-${tag}
+
+      - name: List images
+        run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
+
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Push NLP GPU image to DockerHub
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-nlp | grep gpu | while read image_name; do
             echo "Pushing ${image_name}"
             docker push ${image_name}
           done

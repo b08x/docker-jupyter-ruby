@@ -1,0 +1,35 @@
+services:
+  base-notebook-cpu:
+    image: b08x/notebook-base:cpu
+    build:
+      context: .
+      dockerfile: base/Dockerfile
+
+  nlp-notebook-cpu:
+    image: b08x/notebook-nlp:cpu
+    container_name: notebook-nlp-cpu
+    build:
+      context: .
+      dockerfile: nlp/Dockerfile
+    depends_on:
+      - base-notebook-cpu
+    volumes:
+      - $HOME/Archive/Workspace:/home/jovyan/Archive:ro
+      - $HOME/Documents:/home/jovyan/Library:ro
+      - ${WORKSPACE:-./data}:/home/jovyan/work
+    user: ${UID}:${GID}
+    env_file:
+      - .env
+    environment:
+      PUID: ${UID}
+      PGID: ${GID}
+      REDIS_URL: "redis://redis:6379/0"
+      OHM_URL: "redis://redis:6379/1"
+    ports:
+      - 8889:8888
+    networks:
+      - jupyter
+
+networks:
+  jupyter:
+    driver: bridge

@@ -1,0 +1,40 @@
+services:
+  base-notebook-gpu:
+    image: b08x/notebook-base:gpu
+    build:
+      context: .
+      dockerfile: base/Dockerfile.gpu
+
+  nlp-notebook:
+    image: b08x/notebook-nlp:gpu
+    container_name: notebook-nlp
+    build:
+      context: .
+      dockerfile: nlp/Dockerfile.gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - $HOME/Archive/Workspace:/home/jovyan/Archive:ro
+      - $HOME/Documents:/home/jovyan/Library:ro
+      - ${WORKSPACE:-./data}:/home/jovyan/work
+    user: ${UID}:${GID}
+    env_file:
+      - .env
+    environment:
+      PUID: ${UID}
+      PGID: ${GID}
+      REDIS_URL: "redis://redis:6379/0"
+      OHM_URL: "redis://redis:6379/1"
+    ports:
+      - 8888:8888
+    networks:
+      - jupyter
+
+networks:
+  jupyter:
+    driver: bridge

@@ -23,5 +23,4 @@ group :development do
   gem 'yard'
 end
 
-
-gem "rake", "~> 13.3"
+gem 'rake', '~> 13.3'

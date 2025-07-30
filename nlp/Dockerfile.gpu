@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=b08x/notebook-base
-ARG BASE_IMAGE_TAG=cpu
+ARG BASE_IMAGE_TAG=gpu
 
 # Stage 1: Builder
 FROM rubylang/ruby:3.2.5-jammy AS builder
@@ -59,6 +59,10 @@ RUN cd ${HOME}/.local/share/gem/ruby/3.2.0/gems/ruby-spacy-0.2.3 && \
 
 # Stage 2: Final image
 FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
+
+# Set environment variables for NVIDIA GPU support
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
@@ -144,14 +148,6 @@ COPY --from=builder \
   /usr/local/lib/ruby/ \
   /usr/local/lib/ruby/
 
-COPY --from=builder \
-  /usr/local/share/man/man1/erb.1 \
-  /usr/local/share/man/man1/irb.1 \
-  /usr/local/share/man/man1/ri.1 \
-  /usr/local/share/man/man1/ruby.1 \
-  /usr/local/share/man/man1/
-
-# Copy installed gems from builder
 COPY --from=builder --chown=${NB_UID}:${NB_GID} \
   /root/.local/share/gem/ \
   /home/${NB_USER}/.local/share/gem/
