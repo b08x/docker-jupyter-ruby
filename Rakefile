@@ -1,7 +1,7 @@
 OWNER = 'b08x'.freeze
 IMAGES = {
   'base' => %w[cpu gpu],
-  'nlp'  => %w[cpu gpu]
+  'nlp' => %w[cpu gpu]
 }.freeze
 
 DOCKER_FLAGS = ENV['DOCKER_FLAGS']
@@ -41,7 +41,7 @@ end
 
 IMAGES.each do |image, variants|
   variants.each do |variant|
-    dockerfile = (variant == 'gpu') ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile"
+    dockerfile = variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile"
     next unless File.exist?(dockerfile)
 
     image_tag = "#{OWNER}/notebook-#{image}:#{variant}"
@@ -85,42 +85,48 @@ IMAGES.each do |image, variants|
   desc "Build all variants for #{image}"
   task "build/#{image}" do
     variants.each do |variant|
-      Rake::Task["build/#{image}/#{variant}"].invoke if File.exist?((variant == 'gpu') ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["build/#{image}/#{variant}"].invoke
+      end
     end
   end
 
   desc "Tag all variants for #{image}"
   task "tag/#{image}" do
     variants.each do |variant|
-      Rake::Task["tag/#{image}/#{variant}"].invoke if File.exist?((variant == 'gpu') ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["tag/#{image}/#{variant}"].invoke
+      end
     end
   end
 
   desc "Push all variants for #{image}"
   task "push/#{image}" do
     variants.each do |variant|
-      Rake::Task["push/#{image}/#{variant}"].invoke if File.exist?((variant == 'gpu') ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+      if File.exist?(variant == 'gpu' ? "#{image}/Dockerfile.gpu" : "#{image}/Dockerfile")
+        Rake::Task["push/#{image}/#{variant}"].invoke
+      end
     end
   end
 end
 
 desc 'Build all images and variants'
 task 'build-all' do
-  IMAGES.keys.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["build/#{image}"].invoke
   end
 end
 
 desc 'Tag all images and variants'
 task 'tag-all' do
-  IMAGES.keys.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["tag/#{image}"].invoke
   end
 end
 
 desc 'Push all images and variants'
 task 'push-all' do
-  IMAGES.keys.each do |image|
+  IMAGES.each_key do |image|
     Rake::Task["push/#{image}"].invoke
   end
 end
