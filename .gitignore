@@ -1,0 +1,11 @@
+data/
+.env
+.tool-versions
+Gemfile.lock
+nlp/language_models/
+/**/*/.ipynb_checkpoints
+.rake_tasks~
+jupyter-ruby-docker.code-workspace
+.qodo
+.ruby-version
+docker-jupyter-ruby.code-workspace
