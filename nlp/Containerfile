@@ -163,6 +163,10 @@ COPY --from=builder --chown=${NB_UID}:${NB_GID} \
   /root/Gemfile.lock \
   /home/${NB_USER}/
 
+# Ensure the work directory exists and has correct permissions
+RUN mkdir -p /home/${NB_USER}/work && \
+  fix-permissions /home/${NB_USER}
+
 USER ${NB_UID}
 
 WORKDIR "${HOME}"
