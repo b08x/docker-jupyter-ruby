@@ -8,3 +8,4 @@ jupyter-ruby-docker.code-workspace
 .qodo
 .ruby-gemset
 docker-jupyter-ruby.code-workspace
+*logs/

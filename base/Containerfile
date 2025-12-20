@@ -15,6 +15,8 @@ RUN apt-get update --yes && \
     apt-get install --yes --no-install-recommends \
     # - Add necessary fonts for matplotlib/seaborn
     #   See https://github.com/jupyter/docker-stacks/pull/380 for details
+    build-essential \
+    gcc \
     fonts-liberation \
     libyaml-dev \
     # - `pandoc` is used to convert notebooks to html files
@@ -40,8 +42,9 @@ RUN mamba clean --all -f -y && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     pip install --no-cache-dir \
-    'spacy' 'google-genai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' 'llama-cpp-python' \
+    'spacy' 'google-genai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' \
     --extra-index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu && \
     python3 -m spacy download en_core_web_lg --extra-index-url https://download.pytorch.org/whl/cpu && \
     python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cpu && \
     python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
