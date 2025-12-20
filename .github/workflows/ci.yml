@@ -30,7 +30,7 @@ jobs:
       - name: Tag base image
         run: |
           tag=${GITHUB_SHA:0:12}
-          docker tag b08x/notebook-base:latest b08x/notebook-base:${tag}
+          docker tag ${{ vars.DOCKER_USER }}/notebook-base:latest ${{ vars.DOCKER_USER }}/notebook-base:${tag}
 
       - name: List images
         run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
@@ -45,7 +45,7 @@ jobs:
       - name: Push base image to DockerHub
         if: github.ref == 'refs/heads/main'
         run: |
-          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-base | while read image_name; do
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ vars.DOCKER_USER }}/notebook-base | while read image_name; do
             echo "Pushing ${image_name}"
             docker push ${image_name}
           done
@@ -67,7 +67,7 @@ jobs:
       - name: Tag nlp image
         run: |
           tag=${GITHUB_SHA:0:12}
-          docker tag b08x/notebook-nlp:latest b08x/notebook-nlp:${tag}
+          docker tag ${{ vars.DOCKER_USER }}/notebook-nlp:latest ${{ vars.DOCKER_USER }}/notebook-nlp:${tag}
 
       - name: List images
         run: docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'
@@ -82,7 +82,7 @@ jobs:
       - name: Push nlp image to DockerHub
         if: github.ref == 'refs/heads/main'
         run: |
-          docker images --format '{{.Repository}}:{{.Tag}}' | grep b08x/notebook-nlp | while read image_name; do
+          docker images --format '{{.Repository}}:{{.Tag}}' | grep ${{ vars.DOCKER_USER }}/notebook-nlp | while read image_name; do
             echo "Pushing ${image_name}"
             docker push ${image_name}
           done

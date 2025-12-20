@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-OWNER = ENV['DOCKER_USER'].freeze
+OWNER = ENV['USER'].freeze
 ALL_IMAGES = %w[
   base
   nlp
@@ -8,7 +8,7 @@ ALL_IMAGES = %w[
 
 BASE_IMAGES = ALL_IMAGES.map do |name|
   base_image_name, base_image_tag = nil
-  IO.foreach("#{name}/Dockerfile") do |line|
+  IO.foreach("#{name}/Containerfile") do |line|
     break if base_image_name && base_image_tag
 
     case line
@@ -26,7 +26,7 @@ BASE_IMAGES = ALL_IMAGES.map do |name|
   ]
 end.to_h
 
-DOCKER_FLAGS = ENV['DOCKER_FLAGS']
+PODMAN_FLAGS = ENV['PODMAN_FLAGS'] || ENV['DOCKER_FLAGS']
 
 TAG_LENGTH = 12
 
@@ -44,28 +44,28 @@ ALL_IMAGES.each do |image|
   desc "Pull the base image for #{OWNER}/#{image} image"
   task "pull/base_image/#{image}" do
     base_image = BASE_IMAGES[image]
-    sh "docker pull #{base_image}"
+    sh "podman pull #{base_image}"
   end
 
   desc "Build #{OWNER}/#{image} image"
   task "build/#{image}" => "pull/base_image/#{image}" do
-    sh "docker build -f #{image}/Dockerfile #{DOCKER_FLAGS} --rm --force-rm -t #{OWNER}/notebook-#{image}:latest ."
+    sh "podman build -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Make #{OWNER}/#{image} image"
   task "make/#{image}" do
-    sh "docker build -f #{image}/Dockerfile #{DOCKER_FLAGS} --rm --force-rm -t #{OWNER}/notebook-#{image}:latest ."
+    sh "podman build --build-arg REGISTRY=localhost --build-arg OWNER=#{OWNER} -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Tag #{OWNER}/#{image} image"
   task "tag/#{image}" => "build/#{image}" do
-    sh "docker tag #{OWNER}/notebook-#{image}:latest #{OWNER}/notebook-#{image}:#{revision_tag}"
+    sh "podman tag #{OWNER}/notebook-#{image}:latest #{OWNER}/notebook-#{image}:#{revision_tag}"
   end
 
   desc "Push #{OWNER}/#{image} image"
   task "push/#{image}" => "tag/#{image}" do
-    sh "docker push #{OWNER}/notebook-#{image}:latest"
-    sh "docker push #{OWNER}/notebook-#{image}:#{revision_tag}"
+    sh "podman push #{OWNER}/notebook-#{image}:latest"
+    sh "podman push #{OWNER}/notebook-#{image}:#{revision_tag}"
   end
 end
 
