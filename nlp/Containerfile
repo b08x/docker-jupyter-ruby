@@ -161,11 +161,12 @@ COPY --from=builder --chown=${NB_UID}:${NB_GID} \
 
 # Ensure the work directory exists and has correct permissions
 RUN mkdir -p /home/${NB_USER}/work && \
-  fix-permissions /home/${NB_USER}
+  fix-permissions /home/${NB_USER} && \
+  chown -R ${NB_UID}:${NB_GID} /home/${NB_USER}
 
 USER ${NB_UID}
 
-WORKDIR "${HOME}"
+WORKDIR "/home/${NB_USER}"
 
 RUN RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]') && \
   ln -s "/home/${NB_USER}/.local/share/gem/ruby/${RUBY_VERSION}" "/home/${NB_USER}/.local/gem"
