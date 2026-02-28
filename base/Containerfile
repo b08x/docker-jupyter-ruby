@@ -37,16 +37,26 @@ USER ${NB_UID}
 # Do all this in a single RUN command to avoid duplicating all of the
 # files across image layers when the permissions change
 WORKDIR /tmp
+ARG CUDA_SUPPORT=false
 RUN mamba clean --all -f -y && \
     jupyter lab clean && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
+    if [ "$CUDA_SUPPORT" = "true" ]; then \
     pip install --no-cache-dir \
-    'spacy' 'google-genai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' \
+    'spacy' 'google-genai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' 'crewai' 'ollama' 'imagehash' \
+    --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    CMAKE_ARGS="-DGGML_CUDA=on" pip install --no-cache-dir llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121 && \
+    python3 -m spacy download en_core_web_lg --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cu121; \
+    else \
+    pip install --no-cache-dir \
+    'spacy' 'google-genai' 'google-adk' 'openai' 'chromadb' 'Markdown' 'pyyaml' 'crewai' 'ollama' 'imagehash' \
     --extra-index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu && \
     python3 -m spacy download en_core_web_lg --extra-index-url https://download.pytorch.org/whl/cpu && \
-    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cpu && \
+    python3 -m spacy download en_core_web_sm --extra-index-url https://download.pytorch.org/whl/cpu; \
+    fi && \
     python -c "import sys, importlib.util as util; 1 if util.find_spec('nltk') else sys.exit(); import nltk; nltk.download('punkt')" && \
     fix-permissions "/home/${NB_USER}"
 
