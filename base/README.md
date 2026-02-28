@@ -2,24 +2,24 @@
 
 Built on `quay.io/jupyter/base-notebook` with:
 
-- **spaCy**: Advanced NLP
-- **Google ADK**: AI agent development
-- **AI/ML Libraries**: `google-generativeai`, `openai`, `chromadb`, `nltk`, `pytorch`
+- **spaCy** — Advanced NLP
+- **Google ADK** — AI agent development kit
+- **AI/ML Libraries** — `google-generativeai`, `openai`, `chromadb`, `nltk`, `pytorch`
 
 ## Documentation
 
 - [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html)
 - [Selecting an Image](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-base-notebook)
 
-Adapted from the base Jupyter Notebook Stack to include:
+## Image Contents
 
-- **Spacy:** For advanced Natural Language Processing capabilities.
-- **Google Agent Development Kit (ADK):** For building AI agents.
-- **Other AI/ML Libraries:** Including `google-generativeai`, `openai`, `chromadb`, `nltk`, and `pytorch`.
+This image extends `jupyter/base-notebook` with:
 
-GitHub Actions in the <https://github.com/jupyter/docker-stacks> project builds and pushes this image to the Registry.
+- **spaCy** — Production-grade NLP
+- **Google Agent Development Kit (ADK)** — For building AI agents
+- **Additional AI/ML Libraries** — `google-generativeai`, `openai`, `chromadb`, `nltk`, `pytorch`
 
-Please visit the project documentation site for help to use and contribute to this image and others.
+GitHub Actions builds and pushes this image to the registry. See the [jupyter/docker-stacks](https://github.com/jupyter/docker-stacks) project for more information.
 
 - [Jupyter Docker Stacks on ReadTheDocs](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html)
 - [Selecting an Image :: Core Stacks :: jupyter/base-notebook](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-base-notebook)

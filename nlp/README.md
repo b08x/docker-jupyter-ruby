@@ -2,63 +2,101 @@
 
 Ruby 3.3.8 with IRuby kernel and gems for NLP, AI, and data manipulation.
 
-## Gems
+## Core Gems
 
-### Core
+- **[iruby](https://github.com/SciRuby/iruby)** — Jupyter kernel for Ruby
+- **[pycall](https://github.com/mrkn/pycall.rb)** — Call Python from Ruby
+- **[bundler](https://github.com/rubygems/bundler)** — Gem management
 
-- **[iruby](https://github.com/SciRuby/iruby)**: Jupyter kernel
-- **[pycall](https://github.com/mrkn/pycall.rb)**: Call Python from Ruby
-- **[bundler](https://github.com/rubygems/bundler)**: Gem management
+## NLP & Text Processing
 
-### NLP
+- **[ruby-spacy](https://github.com/yohasebe/ruby-spacy)** — Ruby wrapper for spaCy
+- **[tokenizers](https://github.com/ankane/tokenizers-ruby)** — Hugging Face tokenizers
+- **[lingua](https://github.com/dbalatero/lingua)** — Language detection
+- **[wordnet](https://hg.sr.ht/~ged/ruby-wordnet)** — WordNet interface
+- **[tf-idf-similarity](https://github.com/jpmckinney/tf-idf-similarity)** — TF-IDF and cosine similarity
+- **[bm25f](https://github.com/catflip/bm25f-ruby)** — BM25F ranking algorithm
+- **[pragmatic_segmenter](https://github.com/diasks2/pragmatic_segmenter)** — Sentence boundary detection
+- **[pragmatic_tokenizer](https://github.com/diasks2/pragmatic_tokenizer)** — Text tokenization
+- **[kramdown](https://github.com/gettalong/kramdown)** — Markdown parser
+- **[commonmarker](https://github.com/gjtorikian/commonmarker)** — CommonMark parser
+- **[langchainrb](https://github.com/patterns-ai-core/langchainrb)** — LangChain framework for Ruby
+- **[fuzzy_tools](https://rubygems.org/gems/fuzzy_tools)** — Fuzzy string matching
+- **[linguistics](https://github.com/ged/linguistics)** — Linguistic analysis framework
+- **[loofah](https://github.com/flavorjones/loofah)** — HTML manipulation and sanitization
+- **[treetop](https://github.com/cjheath/treetop)** — PEG parser generator
 
-- **[ruby-spacy](https://github.com/yohasebe/ruby-spacy)**: spaCy wrapper
-- **[tokenizers](https://github.com/ankane/tokenizers-ruby)**: Hugging Face tokenizers
-- **[lingua](https://github.com/dbalatero/lingua)**: Language detection
-- **[wordnet](https://hg.sr.ht/~ged/ruby-wordnet)**: WordNet interface
-- **[tf-idf-similarity](https://github.com/jpmckinney/tf-idf-similarity)**: TF-IDF + cosine similarity
-- **[bm25f](https://github.com/catflip/bm25f-ruby)**: BM25F ranking
-- **[pragmatic_segmenter](https://github.com/diasks2/pragmatic_segmenter)**: Sentence boundary detection
-- **[pragmatic_tokenizer](https://github.com/diasks2/pragmatic_tokenizer)**: Text tokenization
-- **[kramdown](https://github.com/gettalong/kramdown)**: Markdown parser
-- **[commonmarker](https://github.com/gjtorikian/commonmarker)**: CommonMark parser
+## AI & LLM Integration
 
-### AI / LLM
+- **[ruby-openai](https://github.com/alexrudall/ruby-openai)** — OpenAI API client
+- **[groq](https://github.com/drnic/groq-ruby)** — Groq API client
+- **[hugging-face](https://github.com/alchaplinsky/hugging-face)** — Hugging Face Hub client
+- **[chroma-db](https://github.com/mariochavez/chroma)** — Chroma vector database client
+- **[pgvector](https://github.com/pgvector/pgvector-ruby)** — PostgreSQL vector extension support
+- **[aia](https://github.com/MadBomber/aia)** — AI model interface
+- **[ruby-nano-bots](https://github.com/icebaker/ruby-nano-bots)** — Small task-focused bots
+- **[omniai-google](https://github.com/ksylvest/omniai-google)** — OmniAI provider for Google
+- **[omniai-mistral](https://github.com/ksylvest/omniai-mistral)** — OmniAI provider for Mistral
+- **[omniai-openai](https://github.com/ksylvest/omniai-openai)** — OmniAI provider for OpenAI
+- **[open_router](https://github.com/OlympiaAI/open_router)** — OpenRouter API client
+- **[sublayer](https://github.com/sublayerapp/sublayer)** — Sublayer API client
+- **[google-cloud-ai_platform-v1](https://rubygems.org/gems/google-cloud-ai_platform-v1)** — Google Cloud AI Platform
+- **[google_custom_search_api](https://github.com/wiseleyb/google_custom_search_api)** — Google Custom Search
+- **[google_search_results](https://github.com/serpapi/google-search-results-ruby)** — SerpApi Google results
 
-- **[langchainrb](https://github.com/patterns-ai-core/langchainrb)**: LangChain framework
-- **[ruby-openai](https://github.com/alexrudall/ruby-openai)**: OpenAI client
-- **[groq](https://github.com/drnic/groq-ruby)**: Groq API client
-- **[hugging-face](https://github.com/alchaplinsky/hugging-face)**: Hugging Face Hub
-- **[chroma-db](https://github.com/mariochavez/chroma)**: Chroma vector DB
-- **[pgvector](https://github.com/pgvector/pgvector-ruby)**: PostgreSQL vectors
-- **[aia](https://github.com/MadBomber/aia)**: AI model interface
+## Data Handling
 
-### Data
+- **[daru](https://github.com/SciRuby/daru)** — DataFrame implementation
+- **[daru-view](https://github.com/SciRuby/daru-view)** — Interactive plotting
+- **[sequel](https://github.com/jeremyevans/sequel)** — Database toolkit
+- **[ohm](https://github.com/soveran/ohm)** — Redis object-hash mapping
+- **[ohm-contrib](https://github.com/soveran/ohm-contrib)** — Ohm extensions
+- **[redis](https://github.com/redis/redis-rb)** — Redis client
+- **[redic](https://github.com/amakawa/redic)** — Lightweight Redis client
+- **[oj](https://github.com/ohler55/oj)** — Fast JSON parser
+- **[jsonl](https://github.com/zenizh/jsonl)** — JSON Lines support
+- **[yajl-ruby](https://github.com/brianmario/yajl-ruby)** — YAJL JSON bindings
+- **[jsonlint](https://github.com/dougbarth/jsonlint)** — JSON syntax checker
+- **[rubyzip](https://github.com/rubyzip/rubyzip)** — Zip archive support
+- **[algorithms](https://github.com/kanwei/algorithms)** — Algorithms and data structures
+- **[hashie](https://github.com/hashie/hashie)** — Enhanced hash utilities
+- **[psych](https://github.com/ruby/psych)** — YAML parser
 
-- **[daru](https://github.com/SciRuby/daru)**: DataFrame implementation
-- **[daru-view](https://github.com/SciRuby/daru-view)**: Interactive plotting
-- **[sequel](https://github.com/jeremyevans/sequel)**: Database toolkit
-- **[ohm](https://github.com/soveran/ohm)**: Redis OHM
-- **[redis](https://github.com/redis/redis-rb)**: Redis client
-- **[oj](https://github.com/ohler55/oj)**: Fast JSON parser
-- **[jsonl](https://github.com/zenizh/jsonl)**: JSON Lines
+## Development Tools
 
-### Development
+- **[pry](https://github.com/pry/pry)** — Alternative to IRB
+- **[pry-doc](https://github.com/pry/pry-doc)** — Documentation browsing in Pry
+- **[minitest](https://github.com/minitest/minitest)** — Testing framework
+- **[sinatra](https://github.com/sinatra/sinatra)** — Web application DSL
+- **[logging](https://github.com/TwP/logging)** — Flexible logging
+- **[parallel](https://github.com/grosser/parallel)** — Parallel execution
+- **[amazing_print](https://github.com/amazing-print/amazing_print)** — Pretty printing
+- **[dotenv](https://github.com/bkeepers/dotenv)** — Environment variable loading
+- **[rake](https://github.com/ruby/rake)** — Build tool
+- **[ratelimit](https://github.com/ejfinneran/ratelimit)** — Rate limiting
+- **[tool_tailor](https://github.com/kieranklaassen/tool_tailor)** — Convert methods to OpenAI JSON schemas
+- **[pastel](https://github.com/piotrmurach/pastel)** — Terminal styling
+- **[os](https://github.com/rdp/os)** — OS information access
+- **[openssl](https://github.com/ruby/openssl)** — OpenSSL bindings
+- **[open4](https://github.com/ahoward/open4)** — Enhanced subprocess control
 
-- **[pry](https://github.com/pry/pry)**: REPL
-- **[minitest](https://github.com/minitest/minitest)**: Testing
-- **[sinatra](https://github.com/sinatra/sinatra)**: Web framework
-- **[logging](https://github.com/TwP/logging)**: Logging
-- **[parallel](https://github.com/grosser/parallel)**: Parallel execution
+## TTY Toolkit
 
-### TTY
-
-- **[tty-prompt](https://github.com/piotrmurach/tty-prompt)**: Interactive prompts
-- **[tty-table](https://github.com/piotrmurach/tty-table)**: Tables
-- **[tty-spinner](https://github.com/piotrmurach/tty-spinner)**: Spinners
-- **[tty-screen](https://github.com/piotrmurach/tty-screen)**: Screen info
-- **[tty-box](https://github.com/piotrmurach/tty-box)**: Box drawing
-- **[tty-font](https://github.com/piotrmurach/tty-font)**: Large fonts
+- **[tty-prompt](https://github.com/piotrmurach/tty-prompt)** — Interactive prompts
+- **[tty-table](https://github.com/piotrmurach/tty-table)** — Terminal tables
+- **[tty-spinner](https://github.com/piotrmurach/tty-spinner)** — Progress spinners
+- **[tty-screen](https://github.com/piotrmurach/tty-screen)** — Terminal screen info
+- **[tty-box](https://github.com/piotrmurach/tty-box)** — Box drawing
+- **[tty-font](https://github.com/piotrmurach/tty-font)** — Large terminal fonts
+- **[tty-command](https://github.com/piotrmurach/tty-command)** — External command execution
+- **[tty-config](https://github.com/piotrmurach/tty-config)** — Configuration management
+- **[tty-editor](https://github.com/piotrmurach/tty-editor)** — Editor launching
+- **[tty-file](https://github.com/piotrmurach/tty-file)** — File utilities
+- **[tty-link](https://github.com/piotrmurach/tty-link)** — Terminal hyperlinks
+- **[tty-logger](https://github.com/piotrmurach/tty-logger)** — Structured logging
+- **[tty-markdown](https://github.com/piotrmurach/tty-markdown)** — Markdown rendering
+- **[tty-option](https://github.com/piotrmurach/tty-option)** — Command-line parsing
+- **[tty-tree](https://github.com/piotrmurach/tty-tree)** — Directory trees
 
 ## Build
 
@@ -68,143 +106,8 @@ podman build -t your-image-name:latest -f nlp/Containerfile .
 
 ## Patches
 
-- **`respond_to_missing.patch`**: Fixes ruby-spacy/pycall compatibility
-
-This directory contains the configuration to build a Docker image specifically tailored for Natural Language Processing (NLP) tasks using the IRuby kernel in Jupyter environments.
-
-## Overview
-
-The `Dockerfile` sets up a Ruby environment (Ruby 3.3.8) with necessary system dependencies and installs a curated list of Ruby gems useful for NLP, data manipulation, AI interactions, and general development within a Jupyter notebook.
-
-## Included Gems
-
-This image comes pre-installed with the following Ruby gems (specified in `Gemfile`):
-
-### Core & Jupyter Integration
-
-* **irb**: Interactive Ruby shell. (Built-in)
-* **[iruby](https://github.com/SciRuby/iruby)**: Jupyter kernel for Ruby.
-* **[pycall](https://github.com/mrkn/pycall.rb)**: Allows calling Python functions from Ruby.
-* **[bundler](https://github.com/rubygems/bundler)**: Manages Ruby application's gem dependencies.
-
-### NLP & Text Processing
-
-* **[bm25f](https://github.com/catflip/bm25f-ruby)**: A fast implementation of the BM25F ranking algorithm for information retrieval systems.
-* **[commonmarker](https://github.com/gjtorikian/commonmarker)**: A fast, safe CommonMark parser and renderer.
-* **[fuzzy_tools](https://rubygems.org/gems/fuzzy_tools)**: Tools for fuzzy string matching and searching.
-* **[kramdown](https://github.com/gettalong/kramdown)**: A fast, pure Ruby Markdown superset converter.
-* **[langchainrb](https://github.com/patterns-ai-core/langchainrb)**: Ruby implementation of the LangChain framework for building applications with LLMs.
-* **[lingua](https://github.com/dbalatero/lingua)**: Language detection library.
-* **[linguistics](https://github.com/ged/linguistics)**: Framework for linguistic analysis of English texts.
-* **[linkparser](https://rubygems.org/gems/linkparser)**: Ruby interface to the Link Grammar Parser.
-* **[loofah](https://github.com/flavorjones/loofah)**: Library for manipulating and sanitizing HTML fragments.
-* **[mimemagic](https://github.com/mimemagicrb/mimemagic)**: Detects the MIME type of a file by its content.
-* **[poppler](https://rubygems.org/gems/poppler)**: Ruby bindings for the Poppler PDF rendering library.
-* **[pragmatic_segmenter](https://github.com/diasks2/pragmatic_segmenter)**: Rule-based sentence boundary detection.
-* **[pragmatic_tokenizer](https://github.com/diasks2/pragmatic_tokenizer)**: Text tokenizer.
-* **[ruby-spacy](https://github.com/yohasebe/ruby-spacy)**: Ruby wrapper for the spaCy NLP library (requires Python installation).
-* **[srt](https://github.com/cpetersen/srt)**: Library for parsing and manipulating SubRip (.srt) subtitle files.
-* **[tf-idf-similarity](https://github.com/jpmckinney/tf-idf-similarity)**: Calculates TF-IDF and cosine similarity between documents.
-* **[tokenizers](https://github.com/ankane/tokenizers-ruby)**: Ruby bindings for the Hugging Face Tokenizers library.
-* **[treetop](https://github.com/cjheath/treetop)**: Ruby-based parsing expression grammar (PEG) parser generator.
-* **[webvtt](https://github.com/jronallo/webvtt)**: Library for parsing and manipulating WebVTT (.vtt) subtitle files.
-* **[wordnet](https://hg.sr.ht/~ged/ruby-wordnet)**: Ruby interface to the WordNet lexical database.
-* **[wordnet-defaultdb](https://rubygems.org/gems/wordnet-defaultdb)**: Default database files for the `wordnet` gem.
-
-### AI & Machine Learning Interfaces
-
-* **[aia](https://github.com/MadBomber/aia)**: Interface for interacting with various AI models/APIs.
-* **[chroma-db](https://github.com/mariochavez/chroma)**: Ruby client for the Chroma vector database.
-* **[google-cloud-ai_platform-v1](https://rubygems.org/gems/google-cloud-ai_platform-v1)**: Google Cloud AI Platform client library.
-* **[google_custom_search_api](https://github.com/wiseleyb/google_custom_search_api)**: Wrapper for the Google Custom Search JSON API.
-* **[google_search_results](https://github.com/serpapi/google-search-results-ruby)**: Scrapes Google Search Results using SerpApi.
-* **[groq](https://github.com/drnic/groq-ruby)**: Ruby client for the Groq API.
-* **[hugging-face](https://github.com/alchaplinsky/hugging-face)**: Ruby client for the Hugging Face Hub API.
-* **[ruby-nano-bots](https://github.com/icebaker/ruby-nano-bots)**: Small, focused bots for specific tasks, often AI-related.
-* **[numpy](https://github.com/mrkn/numpy.rb)**: (via `pycall`) Interface to the NumPy Python library for numerical computing.
-* **[omniai-google](https://github.com/ksylvest/omniai-google)**: OmniAI provider for Google AI models.
-* **[omniai-mistral](https://github.com/ksylvest/omniai-mistral)**: OmniAI provider for Mistral AI models.
-* **[omniai-openai](https://github.com/ksylvest/omniai-openai)**: OmniAI provider for OpenAI models.
-* **[open_router](https://github.com/OlympiaAI/open_router)**: Ruby client for the OpenRouter API.
-* **[pgvector](https://github.com/pgvector/pgvector-ruby)**: PostgreSQL vector similarity search extension support for Ruby.
-* **[ruby-openai](https://github.com/alexrudall/ruby-openai)**: Ruby client library for the OpenAI API.
-* **[sublayer](https://github.com/sublayerapp/sublayer)**: Ruby client for the Sublayer API.
-
-### Data Handling & Manipulation
-
-* **[algorithms](https://github.com/kanwei/algorithms)**: Ruby implementations of various algorithms and data structures.
-* **[daru](https://github.com/SciRuby/daru)**: Data Analysis in RUby (DataFrame implementation).
-* **[daru-view](https://github.com/SciRuby/daru-view)**: Interactive plotting library for Daru DataFrames.
-* **[hashie](https://github.com/hashie/hashie)**: Collection of classes and mixins that make hashes more powerful.
-* **json**: Standard JSON library for Ruby. (Built-in)
-* **[jsonl](https://github.com/zenizh/jsonl)**: Library for reading and writing JSON Lines format.
-* **[jsonlint](https://github.com/dougbarth/jsonlint)**: Checks JSON files for correct syntax and no silly mistakes.
-* **[oj](https://github.com/ohler55/oj)**: A fast JSON parser and object serializer.
-* **[ohm](https://github.com/soveran/ohm)**: Object-hash mapping library for Redis.
-* **[ohm-contrib](https://github.com/soveran/ohm-contrib)**: Community contributions for the Ohm library.
-* **[psych](https://github.com/ruby/psych)**: YAML parser and emitter.
-* **[redic](https://github.com/amakawa/redic)**: Lightweight Redis client.
-* **[redis](https://github.com/redis/redis-rb)**: Ruby client library for Redis.
-* **[sequel](https://github.com/jeremyevans/sequel)**: Database toolkit for Ruby.
-* **[yajl-ruby](https://github.com/brianmario/yajl-ruby)**: Ruby bindings for the YAJL JSON parsing library.
-* **yaml**: Standard YAML library for Ruby (often uses `psych`). (Built-in, uses psych)
-* **[rubyzip](https://github.com/rubyzip/rubyzip)**: Library for working with Zip archives.
-
-### Development & Utilities
-
-* **[amazing_print](https://github.com/amazing-print/amazing_print)**: Pretty prints Ruby objects with proper indentation and colors.
-* **[dotenv](https://github.com/bkeepers/dotenv)**: Loads environment variables from `.env` files.
-* **[jongleur](https://gitlab.com/RedFred7/Jongleur)**: Task runner utility.
-* **[logging](https://github.com/TwP/logging)**: Flexible logging framework for Ruby.
-* **[minitest](https://github.com/minitest/minitest)**: Complete suite of testing facilities supporting TDD, BDD, mocking, and benchmarking.
-* **open3**: Access to the standard input, standard output, and standard error of subprocesses. (Built-in)
-* **[open4](https://github.com/ahoward/open4)**: Variant of `popen3` that allows specifying the execution environment.
-* **open-uri**: Easy-to-use wrapper for Net::HTTP, Net::HTTPS and Net::FTP. (Built-in)
-* **[openssl](https://github.com/ruby/openssl)**: Ruby bindings for OpenSSL.
-* **[os](https://github.com/rdp/os)**: Simple and easy way to access operating system information.
-* **[parallel](https://github.com/grosser/parallel)**: Run blocks of code in parallel processes or threads.
-* **[pastel](https://github.com/piotrmurach/pastel)**: Terminal string styling library.
-* **[pry](https://github.com/pry/pry)**: Powerful alternative to the standard IRB shell.
-* **[pry-doc](https://github.com/pry/pry-doc)**: Provides documentation browsing capabilities within Pry.
-* **[rake](https://github.com/ruby/rake)**: Ruby build program with capabilities similar to Make.
-* **[ratelimit](https://github.com/ejfinneran/ratelimit)**: Generic rate limiter implementation.
-~~**[sad_panda](https://github.com/mattThousand/sad_panda)**: Sentiment analysis library.~~
-* **[sinatra](https://github.com/sinatra/sinatra)**: DSL for quickly creating web applications in Ruby.
-* **timeout**: Auto-terminate potentially long-running operations. (Built-in)
-* **[tool_tailor](https://github.com/kieranklaassen/tool_tailor)**: A Gem to convert methods to openai JSON schemas for use with tools.
-
-### TTY toolkit
-
-* **[tty-box](https://github.com/piotrmurach/tty-box)**: Draw boxes, frames, and borders in the terminal.
-* **[tty-command](https://github.com/piotrmurach/tty-command)**: Execute external commands with enhanced feedback.
-* **[tty-config](https://github.com/piotrmurach/tty-config)**: Define and manage application configuration.
-* **[tty-editor](https://github.com/piotrmurach/tty-editor)**: Opens a file or text in the user's preferred editor.
-* **[tty-file](https://github.com/piotrmurach/tty-file)**: File manipulation utility methods.
-* **[tty-font](https://github.com/piotrmurach/tty-font)**: Write text in large stylized characters using a variety of terminal friendly fonts.
-* **[tty-link](https://github.com/piotrmurach/tty-link)**: Detects whether the terminal supports hyperlinks and creates them ready for display in the console.
-* **[tty-logger](https://github.com/piotrmurach/tty-logger)**: A readable, structured and beautiful logging for the terminal.
-* **[tty-markdown](https://github.com/piotrmurach/tty-markdown)**: Convert Markdown documents or strings into terminal-friendly output.
-* **[tty-option](https://github.com/piotrmurach/tty-option)**: A declarative command-line parser.
-* **[tty-prompt](https://github.com/piotrmurach/tty-prompt)**: Interactive command-line prompting.
-* **[tty-screen](https://github.com/piotrmurach/tty-screen)**: Get terminal screen size and color depth.
-* **[tty-spinner](https://github.com/piotrmurach/tty-spinner)**: A terminal spinner for tasks that have non-deterministic time frame.
-* **[tty-tree](https://github.com/piotrmurach/tty-tree)**: Print directory or structured data in a tree like format.
-* **[tty-table](https://github.com/piotrmurach/tty-table)**: Draw structured tables in the terminal.
-
-## Build Instructions
-
-To build the Docker image, navigate to the root directory of this repository and run:
-
-```bash
-docker build -t your-image-name:latest -f nlp/Dockerfile .
-```
-
-*(Replace `your-image-name:latest` with your desired image name and tag)*
+**`respond_to_missing.patch`** — Fixes compatibility between ruby-spacy and newer pycall versions. Applied during build.
 
 ## Usage
 
-Once built, you can run this image as part of a Jupyter environment (e.g., using Docker Compose with JupyterHub or JupyterLab). The IRuby kernel should be automatically available when creating new notebooks.
-
-## Patches
-
-* **`respond_to_missing.patch`**: This patch is applied to the `ruby-spacy` gem during the build process to fix compatibility issues with newer versions of the `pycall` gem regarding the `respond_to_missing?` method signature.
+Run as part of a Jupyter environment (Docker Compose with JupyterHub or JupyterLab). The IRuby kernel is available automatically when creating new notebooks.
