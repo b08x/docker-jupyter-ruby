@@ -13,9 +13,9 @@ services:
               count: all
               capabilities: [ gpu ]
     volumes:
-      - ${WORKSPACE:-./data}:/home/jovyan/work:Z
+      - ${WORKSPACE:-./data}:/home/jovyan/work/Workspace:Z
+      - ${HOME}/Videos:/home/jovyan/work/Videos:Z
     user: ${UID:-1000}:${GID:-1000}
-    userns_mode: keep-id
     env_file:
       - .env
     environment:
@@ -27,6 +27,9 @@ services:
       - 8888:8888
     networks:
       - jupyter
+    depends_on:
+      pgvector:
+        condition: service_healthy
   redis:
     image: redis/redis-stack:latest
     container_name: redis
@@ -34,9 +37,9 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "6379:6379"
-      - "8081:8081"
-      - "8001:8001"
+      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8003:8001"
     networks:
       - jupyter
   pgvector:
@@ -44,14 +47,16 @@ services:
     container_name: pgvector
     restart: unless-stopped
     environment:
-      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
       POSTGRES_DB: rubynlp
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgvector_local_data:/data
       - pgvector_pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
       interval: 3s
