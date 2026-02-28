@@ -26,6 +26,8 @@ jobs:
 
       - name: Build base image
         run: rake build/base
+        env:
+          DOCKER_USER: ${{ vars.DOCKER_USER }}
 
       - name: Tag base image
         run: |
@@ -63,6 +65,8 @@ jobs:
 
       - name: Build nlp image
         run: rake build/nlp
+        env:
+          DOCKER_USER: ${{ vars.DOCKER_USER }}
 
       - name: Tag nlp image
         run: |

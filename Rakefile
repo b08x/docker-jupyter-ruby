@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-OWNER = ENV['USER'].freeze
+OWNER = (ENV['DOCKER_USER'] || ENV['USER']).freeze
 ALL_IMAGES = %w[
   base
   nlp
