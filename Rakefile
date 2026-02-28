@@ -49,12 +49,12 @@ ALL_IMAGES.each do |image|
 
   desc "Build #{OWNER}/#{image} image"
   task "build/#{image}" => "pull/base_image/#{image}" do
-    sh "podman build -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
+    sh "podman build --format docker -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Make #{OWNER}/#{image} image"
   task "make/#{image}" do
-    sh "podman build --build-arg REGISTRY=localhost --build-arg OWNER=#{OWNER} -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
+    sh "podman build --format docker --build-arg REGISTRY=localhost --build-arg OWNER=#{OWNER} -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Tag #{OWNER}/#{image} image"

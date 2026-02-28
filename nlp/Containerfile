@@ -48,16 +48,12 @@ WORKDIR /root
 
 COPY nlp/Gemfile .
 
-RUN export GEM_HOME="${HOME}/.local/share/gem/ruby/3.3.0" && \
-  export PATH="${HOME}/.local/share/gem/ruby/3.3.0/bin:${PATH}" && \
+RUN RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]') && \
+  export GEM_HOME="${HOME}/.local/share/gem/ruby/${RUBY_VERSION}" && \
+  export PATH="${HOME}/.local/share/gem/ruby/${RUBY_VERSION}/bin:${PATH}" && \
   bundle lock --add-platform x86_64-linux && \
   bundle config build.redic --with-cxx="clang++" --with-cflags="-std=c++0x" && \
   bundle install
-
-COPY nlp/respond_to_missing.patch .
-
-RUN cd ${HOME}/.local/share/gem/ruby/3.3.0/gems/ruby-spacy-0.2.3 && \
-  patch -Np1 -i "${HOME}/respond_to_missing.patch"
 
 # Stage 2: Final image
 FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG}
@@ -131,8 +127,8 @@ COPY --from=builder \
   /usr/local/bin/
 
 COPY --from=builder \
-  /usr/local/include/ruby-3.3.0/ \
-  /usr/local/include/ruby-3.3.0/
+  /usr/local/include/ruby-*/ \
+  /usr/local/include/
 
 COPY --from=builder \
   /usr/local/lib/libruby.so* \
@@ -165,14 +161,18 @@ COPY --from=builder --chown=${NB_UID}:${NB_GID} \
 
 # Ensure the work directory exists and has correct permissions
 RUN mkdir -p /home/${NB_USER}/work && \
-  fix-permissions /home/${NB_USER}
+  fix-permissions /home/${NB_USER} && \
+  chown -R ${NB_UID}:${NB_GID} /home/${NB_USER}
 
 USER ${NB_UID}
 
-WORKDIR "${HOME}"
+WORKDIR "/home/${NB_USER}"
 
-ENV PATH="/home/${NB_USER}/.local/share/gem/ruby/3.3.0/bin:${HOME}/.local/bin:${PATH}"
-ENV GEM_HOME="/home/${NB_USER}/.local/share/gem/ruby/3.3.0"
+RUN RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]') && \
+  ln -s "/home/${NB_USER}/.local/share/gem/ruby/${RUBY_VERSION}" "/home/${NB_USER}/.local/gem"
+
+ENV GEM_HOME="/home/${NB_USER}/.local/gem"
+ENV PATH="${GEM_HOME}/bin:/home/${NB_USER}/.local/bin:${PATH}"
 
 RUN echo "[[ -f ~/.env ]] && source ~/.env" >> ${HOME}/.bashrc && \
   echo "gem: --user-install --no-document" >> ${HOME}/.gemrc
