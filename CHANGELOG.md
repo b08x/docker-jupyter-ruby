@@ -1,4 +1,4 @@
-## [unreleased]
+## [1.0.0] - 2026-02-28
 
 ### 🚀 Features
 
@@ -15,6 +15,7 @@
 
 - Update README to promote Podman, enhance image descriptions, and added some Ruby NLP/LLM examples.
 - Update README to promote Podman, enhance image descriptions, and added some Ruby NLP/LLM examples.
+- Streamline READMEs and update NLP container configuration
 
 ### ⚙️ Miscellaneous Tasks
 
