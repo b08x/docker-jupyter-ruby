@@ -51,7 +51,7 @@ jobs:
         run: |
           podman images --format '{{.Repository}}:{{.Tag}}' | grep docker.io/${{ env.DOCKER_USER }}/notebook-base | while read image_name; do
             echo "Pushing ${image_name}"
-            podman push docker.io/${image_name}
+            podman push ${image_name}
           done
         env:
           DOCKER_USER: ${{ vars.DOCKER_USER }}
@@ -94,7 +94,7 @@ jobs:
         run: |
           podman images --format '{{.Repository}}:{{.Tag}}' | grep  docker.io/${{  env.DOCKER_USER }}/notebook-nlp | while read image_name; do
             echo "Pushing ${image_name}"
-            podman push docker.io/${image_name}
+            podman push ${image_name}
           done
         env:
           DOCKER_USER: ${{ vars.DOCKER_USER }}
