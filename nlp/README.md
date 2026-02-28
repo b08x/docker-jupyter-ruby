@@ -1,5 +1,75 @@
 # NLP Docker Image for Jupyter Ruby Kernel
 
+Ruby 3.3.8 with IRuby kernel and gems for NLP, AI, and data manipulation.
+
+## Gems
+
+### Core
+
+- **[iruby](https://github.com/SciRuby/iruby)**: Jupyter kernel
+- **[pycall](https://github.com/mrkn/pycall.rb)**: Call Python from Ruby
+- **[bundler](https://github.com/rubygems/bundler)**: Gem management
+
+### NLP
+
+- **[ruby-spacy](https://github.com/yohasebe/ruby-spacy)**: spaCy wrapper
+- **[tokenizers](https://github.com/ankane/tokenizers-ruby)**: Hugging Face tokenizers
+- **[lingua](https://github.com/dbalatero/lingua)**: Language detection
+- **[wordnet](https://hg.sr.ht/~ged/ruby-wordnet)**: WordNet interface
+- **[tf-idf-similarity](https://github.com/jpmckinney/tf-idf-similarity)**: TF-IDF + cosine similarity
+- **[bm25f](https://github.com/catflip/bm25f-ruby)**: BM25F ranking
+- **[pragmatic_segmenter](https://github.com/diasks2/pragmatic_segmenter)**: Sentence boundary detection
+- **[pragmatic_tokenizer](https://github.com/diasks2/pragmatic_tokenizer)**: Text tokenization
+- **[kramdown](https://github.com/gettalong/kramdown)**: Markdown parser
+- **[commonmarker](https://github.com/gjtorikian/commonmarker)**: CommonMark parser
+
+### AI / LLM
+
+- **[langchainrb](https://github.com/patterns-ai-core/langchainrb)**: LangChain framework
+- **[ruby-openai](https://github.com/alexrudall/ruby-openai)**: OpenAI client
+- **[groq](https://github.com/drnic/groq-ruby)**: Groq API client
+- **[hugging-face](https://github.com/alchaplinsky/hugging-face)**: Hugging Face Hub
+- **[chroma-db](https://github.com/mariochavez/chroma)**: Chroma vector DB
+- **[pgvector](https://github.com/pgvector/pgvector-ruby)**: PostgreSQL vectors
+- **[aia](https://github.com/MadBomber/aia)**: AI model interface
+
+### Data
+
+- **[daru](https://github.com/SciRuby/daru)**: DataFrame implementation
+- **[daru-view](https://github.com/SciRuby/daru-view)**: Interactive plotting
+- **[sequel](https://github.com/jeremyevans/sequel)**: Database toolkit
+- **[ohm](https://github.com/soveran/ohm)**: Redis OHM
+- **[redis](https://github.com/redis/redis-rb)**: Redis client
+- **[oj](https://github.com/ohler55/oj)**: Fast JSON parser
+- **[jsonl](https://github.com/zenizh/jsonl)**: JSON Lines
+
+### Development
+
+- **[pry](https://github.com/pry/pry)**: REPL
+- **[minitest](https://github.com/minitest/minitest)**: Testing
+- **[sinatra](https://github.com/sinatra/sinatra)**: Web framework
+- **[logging](https://github.com/TwP/logging)**: Logging
+- **[parallel](https://github.com/grosser/parallel)**: Parallel execution
+
+### TTY
+
+- **[tty-prompt](https://github.com/piotrmurach/tty-prompt)**: Interactive prompts
+- **[tty-table](https://github.com/piotrmurach/tty-table)**: Tables
+- **[tty-spinner](https://github.com/piotrmurach/tty-spinner)**: Spinners
+- **[tty-screen](https://github.com/piotrmurach/tty-screen)**: Screen info
+- **[tty-box](https://github.com/piotrmurach/tty-box)**: Box drawing
+- **[tty-font](https://github.com/piotrmurach/tty-font)**: Large fonts
+
+## Build
+
+```bash
+podman build -t your-image-name:latest -f nlp/Containerfile .
+```
+
+## Patches
+
+- **`respond_to_missing.patch`**: Fixes ruby-spacy/pycall compatibility
+
 This directory contains the configuration to build a Docker image specifically tailored for Natural Language Processing (NLP) tasks using the IRuby kernel in Jupyter environments.
 
 ## Overview

@@ -2,6 +2,208 @@
 
 [![CI](https://github.com/b08x/jupyter-ruby-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/b08x/jupyter-ruby-docker/actions/workflows/ci.yml)
 
+Based on RubyData's [docker-stacks](https://github.com/RubyData/docker-stacks) and official [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks).
+
+<div style="float: left; margin-right: 20px;">
+  <img src="docs/assets/img/info_graphic.webp" alt="Process Diagram" width="500" height="500">
+</div>
+
+This project provides Docker images bundling Jupyter with a Ruby kernel (IRuby) and NLP-focused RubyGems.
+
+## Features
+
+- **Ruby Kernel**: Run Ruby code interactively in Jupyter notebooks
+- **NLP Libraries**: Text tokenization, sentiment analysis, entity extraction
+- **Cross-Language Integration**: Use Python libraries (spaCy, NLTK, Transformers) from Ruby via [pycall](https://github.com/mrkn/pycall.rb)
+- **Data Analysis**: [daru](https://github.com/SciRuby/daru) and [daru-view](https://github.com/SciRuby/daru-view) for data manipulation
+- **Vector Databases**: `pgvector`, `chroma-db`, and `redis` via Docker Compose
+- **TTY Toolkit**: Terminal apps via [tty-toolkit](https://ttytoolkit.org/)
+
+## Prerequisites
+
+- [Podman](https://podman.io/getting-started/installation) or [Docker](https://www.docker.com/get-started)
+- [Podman Compose](https://github.com/containers/podman-compose) or [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Note**: This project uses Podman as the primary runtime. Replace `podman` with `docker` in commands if preferred.
+
+## Building the Images
+
+Two images exist: `base` (Jupyter + Python/AI) and `nlp` (Ruby 3.3.8 + gems).
+
+- **[base](./base/README.md)**: JupyterLab, Python data science libraries, spaCy, Google Generative AI SDK
+- **[nlp](./nlp/README.md)**: Ruby 3.3.8, IRuby kernel, 100+ gems
+
+1. **Clone**:
+
+    ```bash
+    git clone https://github.com/b08x/jupyter-ruby-docker.git
+    cd jupyter-ruby-docker
+    ```
+
+2. **Build**:
+
+    ```bash
+    bundle install
+    rake build/nlp      # Builds base + nlp (recommended)
+    rake build-all
+    ```
+
+    Or use Podman directly:
+
+    ```bash
+    podman build -t b08x/notebook-base:latest -f base/Containerfile .
+    podman build -t b08x/notebook-nlp:latest -f nlp/Containerfile .
+    ```
+
+## Running the Container
+
+### Using `podman run`
+
+```bash
+podman run --rm -p 8888:8888 \
+  -v "${PWD}/work":/home/jovyan/work \
+  --user $(id -u):$(id -g) \
+  b08x/notebook-nlp:latest
+```
+
+Create the `work` directory first. Open `http://localhost:8888` and use the token from the logs.
+
+### Using Compose (Recommended)
+
+Starts notebook, redis, and pgvector services.
+
+1. **Setup**:
+
+    ```bash
+    cp .env.example .env
+    mkdir -p ./data
+    ```
+
+    Edit `.env` to set `UID`, `GID`, and API keys (`OPENAI_API_KEY`, etc.).
+
+2. **Start**:
+
+    ```bash
+    podman-compose up -d
+    ```
+
+3. **Access**:
+    - Jupyter: `http://localhost:8888` — get token via `podman-compose logs nlp-notebook | grep token`
+    - RedisInsight: `http://localhost:8001`
+    - PostgreSQL + pgvector: `localhost:5432` (database: `rubynlp`)
+
+4. **Stop**:
+
+    ```bash
+    podman-compose down
+    ```
+
+## Examples
+
+### NLP Text Processing
+
+```ruby
+require 'ruby-spacy'
+require 'terminal-table'
+
+nlp = Spacy::Language.new('en_core_web_sm')
+text = "Apple Inc. is planning to open a new store in San Francisco."
+doc = nlp.read(text)
+
+rows = doc.ents.map { |ent| [ent.text, ent.label, ent.start_char, ent.end_char] }
+table = Terminal::Table.new(headings: ['Entity', 'Type', 'Start', 'End'], rows: rows)
+puts table
+```
+
+Ruby-spacy bridges Ruby and Python's spaCy via pycall.
+
+### LLM Integration
+
+```ruby
+require 'langchain'
+
+llm = Langchain::LLM::OpenAI.new(api_key: ENV['OPENAI_API_KEY'])
+assistant = Langchain::Assistant.new(llm: llm, instructions: "You're a Ruby expert")
+assistant.add_message_and_run!(content: "Explain procs vs lambdas")
+puts assistant.messages.last.content
+```
+
+LangChain unifies 10+ LLM providers (OpenAI, Groq, Ollama, Google).
+
+### Vector Search
+
+```ruby
+require 'sequel'
+require 'pgvector'
+
+DB = Sequel.connect('postgres://postgres@pgvector:5432/rubynlp')
+DB.run('CREATE EXTENSION IF NOT EXISTS vector')
+
+DB.run <<-SQL
+  CREATE TABLE documents (id SERIAL, content TEXT, embedding vector(384))
+SQL
+
+# Insert and query similar documents
+```
+
+pgvector enables semantic search and RAG directly in PostgreSQL.
+
+### Redis Caching
+
+```ruby
+require 'ohm'
+
+class LLMResponse < Ohm::Model
+  attribute :prompt
+  attribute :response
+  index :prompt
+
+  def self.cached_or_fetch(prompt, model:)
+    cached = find(prompt: prompt, model: model).first
+    return cached.response if cached
+
+    # Fetch from LLM, store in cache, return response
+  end
+end
+```
+
+Caching reduces costs and latency for repeated LLM queries.
+
+## Customization
+
+- **Ruby Version**: Edit `nlp/Containerfile`, change `RUBY_VERSION`
+- **Gems**: Edit `nlp/Gemfile`, run `bundle update`, rebuild with `rake build/nlp`
+- **Python Packages**: Edit `pip install` commands in `base/Containerfile`
+- **Jupyter Config**: Modify `base/jupyter_server_config.py` — remote access enabled by default
+
+## Troubleshooting
+
+- **Build fails**: Ensure 4GB+ memory; check `nlp/Gemfile.lock` for conflicts
+- **Port binding** (rootless Podman): Use ports ≥1024 or set `net.ipv4.ip_unprivileged_port_start=80`
+- **Kernel missing**: Check `iruby register --force` in logs
+- **Remote access**: Verify firewall allows port 8888
+- **Token**: Get from logs — `podman-compose logs nlp-notebook | grep token`
+- **Database issues**: Check service health via `podman-compose ps`
+
+## Recent Changes
+
+### Version 1.1.0 (December 2024)
+
+- **Podman Migration**: Renamed `Dockerfile` → `Containerfile`, `docker-compose.yml` → `compose.yaml`
+- **Ruby Pinning**: Locked Ruby to 3.3.8 with `Gemfile.lock`
+- **Remote Access**: Enabled by default in Jupyter config
+- **Local LLM**: Added `llama-cpp-python` support
+
+## License
+
+MIT. See LICENSE file.
+
+## Contributing
+
+Fork and submit pull requests.
+
+[![CI](https://github.com/b08x/jupyter-ruby-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/b08x/jupyter-ruby-docker/actions/workflows/ci.yml)
+
 Based on RubyData's [docker-stacks](https://github.com/RubyData/docker-stacks) and the official [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks).
 
 <div style="float: left; margin-right: 20px;">

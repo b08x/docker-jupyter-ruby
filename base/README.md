@@ -1,5 +1,16 @@
 # Base Jupyter Notebook Stack
 
+Built on `quay.io/jupyter/base-notebook` with:
+
+- **spaCy**: Advanced NLP
+- **Google ADK**: AI agent development
+- **AI/ML Libraries**: `google-generativeai`, `openai`, `chromadb`, `nltk`, `pytorch`
+
+## Documentation
+
+- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html)
+- [Selecting an Image](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-base-notebook)
+
 Adapted from the base Jupyter Notebook Stack to include:
 
 - **Spacy:** For advanced Natural Language Processing capabilities.
