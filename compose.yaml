@@ -13,14 +13,17 @@ services:
               count: all
               capabilities: [ gpu ]
     volumes:
-      - ${WORKSPACE:-./data}:/home/jovyan/work/Workspace:Z
-      - ${HOME}/Videos:/home/jovyan/work/Videos:Z
+      - ${WORKSPACE:-./data}:/home/jovyan/Workspace:Z
+      - ${HOME}/Videos:/home/jovyan/Videos:Z
+      - ${HOME}/Tools:/home/jovyan/Tools:Z
+      - ${HOME}/Notebook:/home/jovyan/Notebook:Z
+      - work_data:/home/jovyan/work
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
     environment:
-      PUID: ${UID}
-      PGID: ${GID}
+      PUID: ${UID:-1000}
+      PGID: ${GID:-1000}
       REDIS_URL: "redis://redis:6379/0"
       OHM_URL: "redis://redis:6379/1"
     ports:
@@ -71,6 +74,8 @@ volumes:
   pgvector_pgdata:
     driver: local
   redis_data:
+    driver: local
+  work_data:
     driver: local
 
 networks:
