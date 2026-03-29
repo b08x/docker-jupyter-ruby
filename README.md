@@ -63,14 +63,16 @@ Open `http://localhost:8888`. The authentication token appears in container stdo
 Starts `nlp-notebook`, `redis` (redis-stack), and `pgvector` (PostgreSQL + pgvector):
 
 ```bash
-cp .env.example .env
-# Edit .env: set UID, GID, WORKSPACE, and any API keys
+cp compose.yaml.example compose.yaml   # Customize volumes, ports, or GPU settings
+cp .env.example .env                   # Set UID, GID, WORKSPACE, and API keys
 mkdir -p ./data
 
 podman-compose up -d
 podman-compose logs nlp-notebook | grep token   # Get Jupyter token
 podman-compose down
 ```
+
+`compose.yaml.example` is the baseline — it omits personal host directory mounts present in the default `compose.yaml`. Edit the copy to add any additional volume bindings before starting.
 
 Service endpoints:
 
