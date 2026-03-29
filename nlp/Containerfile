@@ -103,6 +103,9 @@ RUN apt-get update && apt-get install -y -V --no-install-recommends \
   tzdata \
   xclip \
   zip && \
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+  apt-get update && \
+  apt-get install -y nodejs && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set up user and permissions
@@ -158,6 +161,8 @@ COPY --from=builder --chown=${NB_UID}:${NB_GID} \
   /root/Gemfile \
   /root/Gemfile.lock \
   /home/${NB_USER}/
+
+RUN npm install -g @beaconbay/ck-search
 
 # Ensure the work directory exists and has correct permissions
 RUN mkdir -p /home/${NB_USER}/work && \

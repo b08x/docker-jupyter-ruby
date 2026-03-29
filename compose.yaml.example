@@ -14,9 +14,6 @@ services:
               capabilities: [ gpu ]
     volumes:
       - ${WORKSPACE:-./data}:/home/jovyan/Workspace:Z
-      - ${HOME}/Videos:/home/jovyan/Videos:Z
-      - ${HOME}/Tools:/home/jovyan/Tools:Z
-      - ${HOME}/Notebook:/home/jovyan/Notebook:Z
       - work_data:/home/jovyan/work
     user: ${UID:-1000}:${GID:-1000}
     env_file:
