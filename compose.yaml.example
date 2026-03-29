@@ -1,0 +1,80 @@
+services:
+  nlp-notebook:
+    image: b08x/notebook-nlp:latest
+    container_name: notebook-nlp
+    build:
+      context: .
+      dockerfile: nlp/Containerfile
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - ${WORKSPACE:-./data}:/home/jovyan/Workspace:Z
+      - work_data:/home/jovyan/work
+    user: ${UID:-1000}:${GID:-1000}
+    env_file:
+      - .env
+    environment:
+      PUID: ${UID:-1000}
+      PGID: ${GID:-1000}
+      REDIS_URL: "redis://redis:6379/0"
+      OHM_URL: "redis://redis:6379/1"
+    ports:
+      - 8888:8888
+    networks:
+      - jupyter
+    depends_on:
+      pgvector:
+        condition: service_healthy
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8003:8001"
+    networks:
+      - jupyter
+  pgvector:
+    image: ankane/pgvector
+    container_name: pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_DB: rubynlp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgvector_local_data:/data
+      - pgvector_pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
+      interval: 3s
+      timeout: 10s
+      retries: 20
+    networks:
+      - jupyter
+
+volumes:
+  pgvector_local_data:
+    driver: local
+  pgvector_pgdata:
+    driver: local
+  redis_data:
+    driver: local
+  work_data:
+    driver: local
+
+networks:
+  jupyter:
+    driver: bridge
