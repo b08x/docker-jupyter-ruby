@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-OWNER = (ENV['DOCKER_USER'] || ENV['USER']).freeze
+OWNER = (ENV["DOCKER_USER"] || ENV.fetch("USER", nil)).freeze
 ALL_IMAGES = %w[
   base
   nlp
@@ -15,18 +15,22 @@ BASE_IMAGES = ALL_IMAGES.map do |name|
     when /BASE_IMAGE_TAG=(\h+)/
       base_image_tag = Regexp.last_match(1)
     when /BASE_IMAGE_TAG=latest/
-      base_image_tag = 'latest'
+      base_image_tag = "latest"
     when /\AFROM\s+([^:]+)/
       base_image_name = Regexp.last_match(1)
     end
   end
   [
     name,
-    [base_image_name, base_image_tag].join(':')
+    [base_image_name, base_image_tag].join(":"),
   ]
 end.to_h
 
-PODMAN_FLAGS = ENV['PODMAN_FLAGS'] || ENV['DOCKER_FLAGS']
+PODMAN_FLAGS = ENV["PODMAN_FLAGS"] || ENV.fetch("DOCKER_FLAGS", nil)
+
+def container_engine
+  @container_engine ||= system("pgrep dockerd > /dev/null 2>&1") ? "docker" : "podman"
+end
 
 TAG_LENGTH = 12
 
@@ -44,47 +48,49 @@ ALL_IMAGES.each do |image|
   desc "Pull the base image for #{OWNER}/#{image} image"
   task "pull/base_image/#{image}" do
     base_image = BASE_IMAGES[image]
-    sh "podman pull #{base_image}"
+    sh "#{container_engine} pull #{base_image}"
   end
 
   desc "Build #{OWNER}/#{image} image"
   task "build/#{image}" => "pull/base_image/#{image}" do
-    sh "podman build --format docker -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
+    format_opts = (container_engine == "podman") ? "--format docker " : ""
+    sh "#{container_engine} build #{format_opts}-f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Make #{OWNER}/#{image} image"
   task "make/#{image}" do
-    sh "podman build --format docker --build-arg REGISTRY=localhost --build-arg OWNER=#{OWNER} -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
+    format_opts = (container_engine == "podman") ? "--format docker " : ""
+    sh "#{container_engine} build #{format_opts}--build-arg REGISTRY=localhost --build-arg OWNER=#{OWNER} -f #{image}/Containerfile #{PODMAN_FLAGS} --rm -t #{OWNER}/notebook-#{image}:latest ."
   end
 
   desc "Tag #{OWNER}/#{image} image"
   task "tag/#{image}" => "build/#{image}" do
-    sh "podman tag #{OWNER}/notebook-#{image}:latest #{OWNER}/notebook-#{image}:#{revision_tag}"
+    sh "#{container_engine} tag #{OWNER}/notebook-#{image}:latest #{OWNER}/notebook-#{image}:#{revision_tag}"
   end
 
   desc "Push #{OWNER}/#{image} image"
   task "push/#{image}" => "tag/#{image}" do
-    sh "podman push #{OWNER}/notebook-#{image}:latest"
-    sh "podman push #{OWNER}/notebook-#{image}:#{revision_tag}"
+    sh "#{container_engine} push #{OWNER}/notebook-#{image}:latest"
+    sh "#{container_engine} push #{OWNER}/notebook-#{image}:#{revision_tag}"
   end
 end
 
-desc 'Build all images'
-task 'build-all' do
+desc "Build all images"
+task "build-all" do
   ALL_IMAGES.each do |image|
     Rake::Task["build/#{image}"].invoke
   end
 end
 
-desc 'Tag all images'
-task 'tag-all' do
+desc "Tag all images"
+task "tag-all" do
   ALL_IMAGES.each do |image|
     Rake::Task["tag/#{image}"].invoke
   end
 end
 
-desc 'Push all images'
-task 'push-all' do
+desc "Push all images"
+task "push-all" do
   ALL_IMAGES.each do |image|
     Rake::Task["push/#{image}"].invoke
   end
