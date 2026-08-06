@@ -113,7 +113,7 @@ gem "google_custom_search_api"
 gem "google_drive"
 gem "google-protobuf"
 gem "google_search_results"
-gem "gosu"
+
 gem "graphql"
 gem "groq"
 gem "gum"
