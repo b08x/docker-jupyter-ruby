@@ -1,6 +1,6 @@
-# NLP Image — Ruby 3.3.8 Agentic CLI Toolkit
+# NLP Image — Ruby 4.0.4 Agentic CLI Toolkit
 
-Ruby 3.3.8 with an IRuby kernel, Python bridge, and a broad collection of gems for building LLM tool-calling agents, MCP servers, and terminal-native CLI front-ends. This is the image where an agent loop gets written — prototyped in a notebook cell, then extracted verbatim into a `bin/` script.
+Ruby 4.0.4 with an IRuby kernel, Python bridge, and a broad collection of gems for building LLM tool-calling agents, MCP servers, and terminal-native CLI front-ends. This is the image where an agent loop gets written — prototyped in a notebook cell, then extracted verbatim into a `bin/` script.
 
 Built on `notebook-base`; requires that image to exist locally or be pulled from the registry before building.
 

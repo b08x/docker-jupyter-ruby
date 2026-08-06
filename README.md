@@ -4,7 +4,7 @@
 
 A containerized JupyterLab + Ruby (IRuby) environment for prototyping agentic command-line tools before they ever touch a terminal. Wire up an LLM loop, a tool-calling MCP server, or a TUI front-end in a notebook cell, iterate against real API responses, then lift the working code into a standalone Ruby CLI.
 
-Two images stack on top of each other: `base` (JupyterLab + Python AI stack — spaCy, local inference, Google's agent SDKs) and `nlp` (Ruby 3.3.8 + 100+ gems for LLM orchestration, MCP, async I/O, and terminal UIs, built on `base`). Run the `nlp` image directly; `base` exists as a foundation and as a source of Python-side tool implementations your Ruby agents can call into via `pycall`.
+Two images stack on top of each other: `base` (JupyterLab + Python AI stack — spaCy, local inference, Google's agent SDKs) and `nlp` (Ruby 4.0.4 + 100+ gems for LLM orchestration, MCP, async I/O, and terminal UIs, built on `base`). Run the `nlp` image directly; `base` exists as a foundation and as a source of Python-side tool implementations your Ruby agents can call into via `pycall`.
 
 ## Why a notebook for CLI agents
 

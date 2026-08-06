@@ -4,7 +4,7 @@ ARG BASE_IMAGE=$REGISTRY/$OWNER/notebook-base
 ARG BASE_IMAGE_TAG=latest
 
 # Stage 1: Builder
-FROM rubylang/ruby:4.0.1-jammy AS builder
+FROM rubylang/ruby:4.0.4-jammy AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y -V --no-install-recommends \

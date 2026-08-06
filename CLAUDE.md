@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repo builds two OCI container images that provide JupyterLab with a Ruby (IRuby) kernel and NLP/LLM-focused gems:
 
 - **`base`** — JupyterLab, Python data science stack, spaCy, Google Generative AI SDK (built on `jupyter/docker-stacks-foundation`)
-- **`nlp`** — Ruby 3.3.8, IRuby kernel, 100+ gems for NLP, LLM integration, and vector search (built on `base`)
+- **`nlp`** — Ruby 4.0.4, IRuby kernel, 100+ gems for NLP, LLM integration, and vector search (built on `base`)
 
 Runtime services via `compose.yaml`: `nlp-notebook`, `redis` (redis-stack), `pgvector` (PostgreSQL + pgvector extension).
 
@@ -51,7 +51,7 @@ Access: Jupyter at `http://localhost:8888`, RedisInsight at `http://localhost:80
 jupyter/docker-stacks-foundation
     └── base/Containerfile  (notebook-base)
             └── nlp/Containerfile  (notebook-nlp)
-                    ├── Stage 1: rubylang/ruby:3.3.8-jammy (builder)
+                    ├── Stage 1: rubylang/ruby:4.0.4-jammy (builder)
                     │     Compiles all native gem extensions
                     └── Stage 2: FROM notebook-base
                           Copies compiled Ruby + gems from builder
@@ -90,7 +90,7 @@ GitHub Actions (`.github/workflows/ci.yml`):
 ## Development Conventions
 
 - **Container files are named `Containerfile`** (OCI standard), not `Dockerfile`. The `compose.yaml` `dockerfile:` key still points to `nlp/Containerfile`.
-- **Ruby is pinned to 3.3.8** in `nlp/Containerfile` (`FROM rubylang/ruby:3.3.8-jammy`). Update both the Containerfile and `.ruby-version` together.
+- **Ruby is pinned to 4.0.4** in `nlp/Containerfile` (`FROM rubylang/ruby:4.0.4-jammy`). Update both the Containerfile and `.ruby-version` together.
 - **`nlp/Gemfile.lock` is not committed** — it's gitignored and regenerated on every build inside the builder stage (`bundle lock --add-platform x86_64-linux`). Only the repo-root `Gemfile.lock` (Rake/bundler host tooling) is tracked and must be committed after changes to the root `Gemfile`.
 - **Patches** applied during the build (e.g., `respond_to_missing.patch` for ruby-spacy/pycall compatibility) live in `nlp/` and are applied in `nlp/Containerfile`.
 - **No test harness is wired to CI.** `minitest` is in the Gemfile but tests aren't run in CI. Adding test infrastructure requires updating the CI workflow.
