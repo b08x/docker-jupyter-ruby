@@ -2,11 +2,9 @@
 # SPDX-FileCopyrightText:  2022 Joel Drapper
 # SPDX-License-Identifier: MIT
 ---
-
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.3
-
+  TargetRubyVersion: 4.0
 
 Layout/ArgumentAlignment:
   Enabled: true
