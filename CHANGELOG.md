@@ -8,8 +8,7 @@
 ### ⚙️ Miscellaneous Tasks
 
 - Removed old backlog doc, updated changelog
-- Update image tagging and pushing to use explicit docker.io registry. fixes: """Error: trying to reuse blob sha256:efafae78d70c98626c521c246827389128e7d7ea442db31bc433934647f0c791 at destination: pinging container registry localhost: Get "<https://localhost/v2/>": dial tcp [::1]:443: connect: connection refused"""
-
+- Update image tagging and pushing to use explicit docker.io registry. fixes: """Error: trying to reuse blob sha256:efafae78d70c98626c521c246827389128e7d7ea442db31bc433934647f0c791 at destination: pinging container registry localhost: Get "https://localhost/v2/": dial tcp [::1]:443: connect: connection refused"""
 ## [1.0.0] - 2026-02-28
 
 ### 🚀 Features

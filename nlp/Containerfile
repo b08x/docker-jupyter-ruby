@@ -148,12 +148,6 @@ COPY --from=builder \
   /usr/local/lib/ruby/ \
   /usr/local/lib/ruby/
 
-COPY --from=builder \
-  /usr/local/share/man/man1/erb.1 \
-  /usr/local/share/man/man1/irb.1 \
-  /usr/local/share/man/man1/ri.1 \
-  /usr/local/share/man/man1/ruby.1 \
-  /usr/local/share/man/man1/
 
 # Copy installed gems from builder
 COPY --from=builder --chown=${NB_UID}:${NB_GID} \
