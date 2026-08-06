@@ -4,7 +4,7 @@ ARG BASE_IMAGE=$REGISTRY/$OWNER/notebook-base
 ARG BASE_IMAGE_TAG=latest
 
 # Stage 1: Builder
-FROM rubylang/ruby:3.3.8-jammy AS builder
+FROM rubylang/ruby:4.0.1-jammy AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y -V --no-install-recommends \
@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y -V --no-install-recommends \
   gcc \
   git \
   git-lfs \
+  imagemagick \
   link-grammar \
   liblink-grammar-dev \
   libcairo2-dev \
@@ -29,11 +30,13 @@ RUN apt-get update && apt-get install -y -V --no-install-recommends \
   libmysqlclient-dev \
   libncurses5-dev \
   libopenblas-dev \
+  libopenslide-dev \
   libpoppler-glib-dev \
   libpq-dev \
   libreadline-dev \
   libsqlite3-dev \
   libssl-dev \
+  libvips-dev \
   libxml2-dev \
   libxslt1-dev \
   libyaml-dev \
