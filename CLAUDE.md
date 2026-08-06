@@ -32,6 +32,7 @@ The Rakefile auto-detects the container engine by checking for a running `docker
 ## Running
 
 ```bash
+cp compose.yaml.example compose.yaml   # compose.yaml is gitignored; example is the template
 cp .env.example .env            # Set UID, GID, WORKSPACE, API keys
 mkdir -p ./data                 # Or set WORKSPACE in .env
 
@@ -63,14 +64,16 @@ The multi-stage build in `nlp/Containerfile` is critical: native gems (ffi, zmq,
 | File | Purpose |
 |------|---------|
 | `nlp/Gemfile` | All Ruby gems for the nlp image; edit here to add/update gems |
-| `nlp/Gemfile.lock` | Locked dependency tree — must be committed with changes |
+| `Gemfile.lock` (repo root) | Locked deps for the **host-side** Rake/bundler tooling — tracked in git |
+| `nlp/Gemfile.lock` | Generated inside the builder stage via `bundle lock --add-platform`; gitignored, not committed |
 | `nlp/Containerfile` | Two-stage OCI build for the nlp image |
 | `base/Containerfile` | Python/Jupyter base image |
-| `base/jupyter_server_config.py` | Jupyter config; remote access enabled by default |
-| `compose.yaml` | Service definitions; reads from `.env` |
+| `base/jupyter_server_config.py` | Jupyter config; remote access disabled by default |
+| `compose.yaml` | Service definitions; reads from `.env`; gitignored — copy from `compose.yaml.example` |
 | `Rakefile` | All build/tag/push tasks |
-| `gems/` | Pre-built `.gem` files for gems not available on RubyGems (ferret, nmatrix, rbplotly) |
+| `gems/` | Pre-built `.gem` files for gems not available on RubyGems (ferret, nmatrix, nmatrix-fftw, nmatrix-lapacke, rbplotly) |
 | `postgres/init.sql` | PostgreSQL initialization SQL |
+| `nlp/respond_to_missing.patch` | Patch applied during build fixing ruby-spacy/pycall `respond_to_missing?` incompatibility |
 
 ### Gem Path Convention
 
@@ -88,8 +91,10 @@ GitHub Actions (`.github/workflows/ci.yml`):
 
 - **Container files are named `Containerfile`** (OCI standard), not `Dockerfile`. The `compose.yaml` `dockerfile:` key still points to `nlp/Containerfile`.
 - **Ruby is pinned to 3.3.8** in `nlp/Containerfile` (`FROM rubylang/ruby:3.3.8-jammy`). Update both the Containerfile and `.ruby-version` together.
-- **Always commit `Gemfile.lock`** after gem changes. The builder stage runs `bundle lock --add-platform x86_64-linux` to ensure cross-platform lock entries.
+- **`nlp/Gemfile.lock` is not committed** — it's gitignored and regenerated on every build inside the builder stage (`bundle lock --add-platform x86_64-linux`). Only the repo-root `Gemfile.lock` (Rake/bundler host tooling) is tracked and must be committed after changes to the root `Gemfile`.
 - **Patches** applied during the build (e.g., `respond_to_missing.patch` for ruby-spacy/pycall compatibility) live in `nlp/` and are applied in `nlp/Containerfile`.
 - **No test harness is wired to CI.** `minitest` is in the Gemfile but tests aren't run in CI. Adding test infrastructure requires updating the CI workflow.
 - **`POSTGRES_HOST_AUTH_METHOD`** is `scram-sha-256` in `compose.yaml` (was `trust` previously — do not revert).
 - The `make/<image>` Rake tasks (vs `build/<image>`) pass `--build-arg REGISTRY=localhost` for local registry builds without pulling from DockerHub.
+- **`base/Containerfile` build args**: `BASE_IMAGE_TAG` (upstream `quay.io/jupyter/base-notebook` tag, default `latest`) and `CUDA_SUPPORT=true|false` (switches all PyTorch/`llama-cpp-python` installs between CPU and CUDA 12.1 wheels, default `false`).
+- **`nlp/Containerfile` build args**: `REGISTRY` (default `docker.io`), `OWNER` (default `b08x`), `BASE_IMAGE_TAG` (tag of `notebook-base` to build from) — used to pull the `base` image the `nlp` build depends on.

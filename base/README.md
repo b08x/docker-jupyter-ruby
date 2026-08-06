@@ -1,18 +1,18 @@
-# Base Jupyter Notebook Stack
+# Base Image — Python Tool & Inference Layer
 
 JupyterLab foundation image with Python AI/NLP libraries, built on `quay.io/jupyter/base-notebook`.
 
-This image sits at the bottom of the stack — the `nlp` image (Ruby + IRuby kernel) builds directly on top of it.
+This image sits at the bottom of the stack — the `nlp` image (Ruby + IRuby kernel, where the agent loop and CLI actually live) builds directly on top of it. Treat this layer as the Python-side tool implementations and local-inference backend a Ruby agent reaches into via `pycall`: spaCy for NLP tool bodies, `llama-cpp-python`/CUDA PyTorch for local model tools, `google-adk`/`google-genai` for Gemini-backed agents, `crewai` when a tool itself needs to be a small Python agent.
 
 ## Features
 
-- **spaCy** — Production-grade NLP with `en_core_web_sm` and `en_core_web_lg` models pre-downloaded
-- **Google AI Stack** — `google-genai` and `google-adk` for Gemini API access and agent development
-- **Local LLM Support** — `llama-cpp-python` installed with CPU or CUDA wheels depending on build arg
-- **LLM Integrations** — `openai`, `ollama`, `crewai` for multi-provider LLM workflows
-- **Vector Search** — `chromadb` for in-process embedding storage and similarity queries
+- **spaCy** — Production-grade NLP with `en_core_web_sm` and `en_core_web_lg` models pre-downloaded; the backend for an entity-extraction or dependency-parsing tool called from Ruby
+- **Google AI Stack** — `google-genai` and `google-adk` for Gemini API access and agent development, usable directly or as a tool a Ruby agent shells/pycalls into
+- **Local LLM Support** — `llama-cpp-python` installed with CPU or CUDA wheels depending on build arg, for tools that need offline/local inference instead of an API call
+- **LLM Integrations** — `openai`, `ollama`, `crewai` for multi-provider LLM workflows and Python-side sub-agents
+- **Vector Search** — `chromadb` for in-process embedding storage and similarity queries — a lighter-weight alternative to pgvector for a tool that doesn't need a separate service
 - **CUDA/CPU Toggle** — Single `CUDA_SUPPORT` build arg switches all PyTorch-backed installs between CPU and CUDA 12.1 wheels
-- **Notebook Export** — `pandoc` and multiple inline figure formats (`png`, `svg`, `pdf`, `jpeg`) for full `nbconvert` support
+- **Notebook Export** — `pandoc` and multiple inline figure formats (`png`, `svg`, `pdf`, `jpeg`) for full `nbconvert` support, useful for exporting a working prototype notebook as documentation before extraction to a CLI
 
 ## Installation
 
@@ -60,7 +60,7 @@ podman build \
 
 ## Usage
 
-This image is primarily consumed as a base for the `nlp` image. Running it directly gives a plain JupyterLab session without the Ruby kernel:
+This image is primarily consumed as a base for the `nlp` image, where the actual agent/CLI code is written. Running it directly gives a plain JupyterLab session without the Ruby kernel — useful for prototyping a Python-only tool in isolation before wiring it up as something a Ruby agent calls:
 
 ```bash
 podman run --rm -p 8888:8888 \
@@ -95,18 +95,18 @@ Notable defaults:
 
 ## Included Python Libraries
 
-| Library | Purpose |
-| --- | --- |
-| `spacy` + models | NLP pipeline, NER, tokenization (`en_core_web_sm`, `en_core_web_lg`) |
-| `google-genai` | Gemini API client |
-| `google-adk` | Google Agent Development Kit |
-| `openai` | OpenAI API client |
-| `ollama` | Local Ollama model client |
-| `crewai` | Multi-agent orchestration framework |
-| `chromadb` | Embedded vector database |
-| `llama-cpp-python` | Local GGUF model inference |
-| `nltk` (punkt) | Tokenization utilities |
-| `imagehash` | Perceptual image hashing |
+| Library | Purpose | Agent-CLI role |
+| --- | --- | --- |
+| `spacy` + models | NLP pipeline, NER, tokenization (`en_core_web_sm`, `en_core_web_lg`) | Backend for entity/parsing tools called from Ruby via `pycall` |
+| `google-genai` | Gemini API client | Provider backend for a Gemini-based agent loop |
+| `google-adk` | Google Agent Development Kit | Reference/alternative agent framework, or a Python sub-agent tool |
+| `openai` | OpenAI API client | Provider backend, or Python-side comparison against `ruby_llm` |
+| `ollama` | Local Ollama model client | Local-inference tool backend |
+| `crewai` | Multi-agent orchestration framework | Python-side multi-agent tool, comparable to `claude_swarm` on the Ruby side |
+| `chromadb` | Embedded vector database | Lightweight in-process alternative to the `pgvector` service for agent memory |
+| `llama-cpp-python` | Local GGUF model inference | Offline inference tool, no external API dependency |
+| `nltk` (punkt) | Tokenization utilities | Text-preprocessing step for ingestion tools |
+| `imagehash` | Perceptual image hashing | Dedup/identity tool for multimodal agent inputs |
 
 ## Upstream Reference
 
